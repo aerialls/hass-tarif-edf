@@ -29,6 +29,8 @@ jobs:
         with:
           ref: main
 
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+
       - name: Bump manifest.json version
         env:
           RELEASE_VERSION: ${{ inputs.version }}
@@ -36,13 +38,16 @@ jobs:
           yq -i -o json '.version=strenv(RELEASE_VERSION)' \
             custom_components/tarif_edf/manifest.json
 
+      - name: Bump pyproject.toml version
+        run: uv version --frozen "${{ inputs.version }}"
+
       - name: Commit and tag
         env:
           RELEASE_VERSION: ${{ inputs.version }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add custom_components/tarif_edf/manifest.json
+          git add custom_components/tarif_edf/manifest.json pyproject.toml
           git commit -m "chore: release ${RELEASE_VERSION}"
           git tag "${RELEASE_VERSION}"
           git push origin HEAD:main
