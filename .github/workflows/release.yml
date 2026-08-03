@@ -1,27 +1,55 @@
 name: Release
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g. 3.2.0)"
+        required: true
+        type: string
 
 jobs:
   release:
-    name: Tarif EDF release
+    name: Bump version and release
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - name: "Set version number"
+      - name: Validate version format
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
         run: |
-          yq -i -o json '.version="${{ github.event.release.tag_name }}"' \
-            "${{ github.workspace }}/custom_components/tarif_edf/manifest.json"
-      # Pack the HACS dir as a zip and upload to the release
-      - name: ZIP Tarif EDF Dir
-        run: |
-          cd "${{ github.workspace }}/custom_components/tarif_edf"
-          zip tarif_edf.zip -r ./
-      - name: Upload zip to release
-        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
+          if ! [[ "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::'$RELEASE_VERSION' is not a valid semver (e.g. 3.2.0 or 3.2.0-beta.1)"
+            exit 1
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          files: ${{ github.workspace }}/custom_components/tarif_edf/tarif_edf.zip
+          ref: main
+
+      - name: Bump manifest.json version
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          yq -i -o json '.version=strenv(RELEASE_VERSION)' \
+            custom_components/tarif_edf/manifest.json
+
+      - name: Commit and tag
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add custom_components/tarif_edf/manifest.json
+          git commit -m "chore: release ${RELEASE_VERSION}"
+          git tag "${RELEASE_VERSION}"
+          git push origin HEAD:main
+          git push origin "refs/tags/${RELEASE_VERSION}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@fe965f7af51af5f2602596916f38a38df2e33de0 # v3.0.2
+        with:
+          tag_name: ${{ inputs.version }}
+          generate_release_notes: true
