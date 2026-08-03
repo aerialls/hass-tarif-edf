@@ -1,4 +1,4 @@
-name: Release
+name: Prepare release
 
 on:
   workflow_dispatch:
@@ -9,12 +9,10 @@ on:
         type: string
 
 jobs:
-  release:
-    name: Bump version and release
+  prepare:
+    name: Open version-bump PR
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    permissions:
-      contents: write
     steps:
       - name: Validate version format
         env:
@@ -28,9 +26,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
-          # main is protected and requires status checks; pushing the version
-          # bump commit straight to main needs an admin-owned PAT so the push
-          # is exempted the same way an admin's own push would be.
+          # A branch pushed (and PR opened) with the default GITHUB_TOKEN
+          # never triggers other workflows, so its required status checks
+          # would never run. RELEASE_PAT just needs to be a regular
+          # collaborator token with Contents + Pull requests write access -
+          # no admin/bypass rights needed, since this only opens a PR for
+          # you to review and merge yourself.
           token: ${{ secrets.RELEASE_PAT }}
 
       - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
@@ -45,20 +46,19 @@ jobs:
       - name: Bump pyproject.toml version
         run: uv version --frozen "${{ inputs.version }}"
 
-      - name: Commit and tag
+      - name: Open release PR
         env:
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
           RELEASE_VERSION: ${{ inputs.version }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "release/${RELEASE_VERSION}"
           git add custom_components/tarif_edf/manifest.json pyproject.toml
           git commit -m "chore: release ${RELEASE_VERSION}"
-          git tag "${RELEASE_VERSION}"
-          git push origin HEAD:main
-          git push origin "refs/tags/${RELEASE_VERSION}"
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
-        with:
-          tag_name: ${{ inputs.version }}
-          generate_release_notes: true
+          git push origin "release/${RELEASE_VERSION}"
+          gh pr create \
+            --base main \
+            --head "release/${RELEASE_VERSION}" \
+            --title "chore: release ${RELEASE_VERSION}" \
+            --body "Automated version bump for release ${RELEASE_VERSION}. Merging this (squash) will tag and publish the release."
