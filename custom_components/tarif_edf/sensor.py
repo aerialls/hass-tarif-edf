@@ -109,7 +109,7 @@ async def async_setup_entry(
                 TarifEdfSensor(
                     coordinator,
                     "tempo_couleur_aujourdhui",
-                    "Tarif Tempo Couleur Aujourd'hui",
+                    "Tarif Tempo Couleur Aujourdhui",
                     state_class=None,
                 ),
                 TarifEdfSensor(
