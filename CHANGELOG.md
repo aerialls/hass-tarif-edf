@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/aerialls/hass-tarif-edf/compare/1.1.2...1.1.3) (2026-08-03)
+
+
+### 🔧 CI
+
+* **release-please:** drop the v prefix from release names too ([#23](https://github.com/aerialls/hass-tarif-edf/issues/23)) ([345fe5f](https://github.com/aerialls/hass-tarif-edf/commit/345fe5f831ed10a2c9e06c10acb823506538384e))
+
 ## [1.1.2](https://github.com/aerialls/hass-tarif-edf/compare/1.1.1...1.1.2) (2026-08-03)
 
 
