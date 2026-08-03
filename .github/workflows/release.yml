@@ -1,4 +1,4 @@
-name: release-please
+name: Release
 
 on:
   push:
@@ -16,8 +16,4 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
-          # The default GITHUB_TOKEN never triggers other workflows, so the
-          # release PR it opens would never get its required status checks
-          # (Pytest/Hassfest/HACS) to run, and merging would stay blocked
-          # forever. RELEASE_PAT just needs Contents + Pull requests write.
           token: ${{ secrets.RELEASE_PAT }}
