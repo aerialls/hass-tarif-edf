@@ -1,0 +1,32 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "simple",
+  "include-v-in-tag": false,
+  "extra-files": [
+    {
+      "type": "json",
+      "path": "custom_components/tarif_edf/manifest.json",
+      "jsonpath": "$.version"
+    },
+    {
+      "type": "toml",
+      "path": "pyproject.toml",
+      "jsonpath": "$.project.version"
+    }
+  ],
+  "changelog-sections": [
+    { "type": "feat", "section": "🚀 Features" },
+    { "type": "fix", "section": "🐛 Bug Fixes" },
+    { "type": "perf", "section": "⚡ Performance" },
+    { "type": "refactor", "section": "♻️ Refactors" },
+    { "type": "test", "section": "🧪 Tests" },
+    { "type": "docs", "section": "📝 Documentation" },
+    { "type": "chore", "section": "🔧 Chores" },
+    { "type": "ci", "section": "🔧 CI" },
+    { "type": "build", "section": "🔧 Build" },
+    { "type": "revert", "section": "⏪ Reverts" }
+  ],
+  "packages": {
+    ".": {}
+  }
+}
