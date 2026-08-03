@@ -28,6 +28,10 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
+          # main is protected and requires status checks; pushing the version
+          # bump commit straight to main needs an admin-owned PAT so the push
+          # is exempted the same way an admin's own push would be.
+          token: ${{ secrets.RELEASE_PAT }}
 
       - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
 
