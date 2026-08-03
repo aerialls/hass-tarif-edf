@@ -2,11 +2,13 @@
 
 Provides current electricity rates for French EDF contracts (Base, HP/HC, Tempo) with automatic tariff updates from official data.gouv.fr sources.
 
+This repository is based on the main [delphiki/hass-tarif-edf](https://github.com/delphiki/hass-tarif-edf) project.
+
 ## Installation
 
 ### Using HACS
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=divers33&repository=hass-tarif-edf&category=integration)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=aerialls&repository=hass-tarif-edf&category=integration)
 
 ### Manual install
 
