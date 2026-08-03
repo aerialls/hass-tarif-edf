@@ -1,6 +1,6 @@
 [project]
 name = "hass-tarif-edf"
-version = "1.0.0"
+version = "1.1.0"
 description = "Home Assistant integration to retrieve EDF electricity tariffs (Base, HP/HC, Tempo)"
 requires-python = ">=3.13.2"
 
