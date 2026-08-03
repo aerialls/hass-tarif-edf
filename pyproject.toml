@@ -7,7 +7,7 @@ requires-python = ">=3.13.2"
 [dependency-groups]
 dev = [
     "pytest-homeassistant-custom-component==0.13.300",
-    "pycares<5", # aiodns 3.5.0 is incompatible with pycares 5.x
+    "pycares<6", # aiodns 3.5.0 is incompatible with pycares 5.x
 ]
 
 [tool.pytest.ini_options]
